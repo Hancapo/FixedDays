@@ -3,7 +3,7 @@
 #include "../thirdparty/include/MinHook.h"
 #include "state.h"
 #include "hooks_device.h"
-
+#include "hooks_reset.h"
 
 
 struct IDirect3D9;
@@ -66,6 +66,14 @@ static HRESULT WINAPI hk_CreateDevice(
     {
         Log("[days-fix] CreateDevice: pp=null");
     }
+    
+    if (pp && pp->Windowed && g_state.forceInternal720)
+    {
+        pp->BackBufferWidth  = g_state.forcedW;
+        pp->BackBufferHeight = g_state.forcedH;
+        Log("[days-fix] Forcing internal BB to %ux%u (windowed)", g_state.forcedW, g_state.forcedH);
+    }
+
 
     HRESULT hr = real_CreateDevice(self, Adapter, DeviceType, hFocusWindow, BehaviorFlags, pp, outDev);
 

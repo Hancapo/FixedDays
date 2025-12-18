@@ -3,6 +3,7 @@
 #include "state.h"
 #include "../thirdparty/include/MinHook.h"
 
+
 using GetCursorPos_t = BOOL (WINAPI*)(LPPOINT);
 static GetCursorPos_t real_GetCursorPos = nullptr;
 
@@ -11,38 +12,31 @@ static BOOL WINAPI hk_GetCursorPos(LPPOINT p)
     BOOL ok = real_GetCursorPos(p);
     if (!ok || !p) return ok;
 
-    // Si no tenemos datos, no tocamos nada
     if (!g_state.hwnd || g_state.bbW == 0 || g_state.bbH == 0)
         return ok;
 
-    // Pasar de screen -> client
     POINT c = *p;
     if (!ScreenToClient(g_state.hwnd, &c))
         return ok;
 
-    // dst rect donde está realmente la imagen
     int dx = g_state.lastDst.left;
     int dy = g_state.lastDst.top;
     int dw = g_state.lastDst.right  - g_state.lastDst.left;
     int dh = g_state.lastDst.bottom - g_state.lastDst.top;
     if (dw <= 0 || dh <= 0) return ok;
 
-    // Coordenada relativa dentro del dst
     int x = c.x - dx;
     int y = c.y - dy;
 
-    // Clamp dentro del rect (así nunca “sales”)
     if (x < 0) x = 0; if (x > dw) x = dw;
     if (y < 0) y = 0; if (y > dh) y = dh;
 
-    // Normalizar 0..1 y mapear a backbuffer interno
     double nx = (double)x / (double)dw;
     double ny = (double)y / (double)dh;
 
     int mx = (int)(nx * (double)g_state.bbW + 0.5);
     int my = (int)(ny * (double)g_state.bbH + 0.5);
 
-    // El juego suele esperar screen coords -> convertimos client->screen
     POINT out{ mx, my };
     ClientToScreen(g_state.hwnd, &out);
     *p = out;

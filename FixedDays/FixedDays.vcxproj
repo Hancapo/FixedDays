@@ -161,6 +161,7 @@
   <ItemGroup>
     <ClCompile Include="src\hooks_d3d9.cpp" />
     <ClCompile Include="src\hooks_device.cpp" />
+    <ClCompile Include="src\hooks_reset.cpp" />
     <ClCompile Include="src\hooks_user32.cpp" />
     <ClCompile Include="src\log.cpp" />
     <ClCompile Include="src\minhook_init.cpp" />
@@ -411,6 +412,7 @@
   <ItemGroup>
     <ClInclude Include="src\hooks_d3d9.h" />
     <ClInclude Include="src\hooks_device.h" />
+    <ClInclude Include="src\hooks_reset.h" />
     <ClInclude Include="src\hooks_user32.h" />
     <ClInclude Include="src\log.h" />
     <ClInclude Include="src\minhook_init.h" />
